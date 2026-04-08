@@ -24,4 +24,8 @@ public abstract class Transaccion {
     public String getDescripcion() { return descripcion; }
     public Double getMonto() { return monto; }
     public LocalDate getFecha() { return fecha; }
+    @Override
+    public String toString(){
+        return this.getDescripcion()+" - "+this.getMonto()+" - "+this.getFecha();
+    }
 }

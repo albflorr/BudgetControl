@@ -5,6 +5,7 @@
 package aplicacion;
 
 import dominio.Transaccion;
+import java.util.List;
 
 public class BudgetService {
     private final IBudgetRepository repository;
@@ -20,7 +21,11 @@ public class BudgetService {
             repository.guardar(t);
         }
     }
-
+    
+    public List<Transaccion> obtenerHistorialCompleto() {
+        return repository.obtenerTodas();
+    }
+    
     public Double calcularSaldoTotal() {
         return repository.obtenerTodas().stream()
                 .mapToDouble(Transaccion::calcularImpacto)
