@@ -6,8 +6,9 @@ import aplicacion.IBudgetRepository;
 import dominio.Transaccion;
 import infraestructura.persistence.MySQLBudgetRepository;
 import infraestructura.ui.BudgetController;
+import java.awt.Color;
+import java.time.LocalDate;
 import java.util.List;
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 /*
@@ -20,11 +21,10 @@ import javax.swing.table.DefaultTableModel;
  * @author aflor
  */
 public class BudgetForm extends javax.swing.JFrame {
-    private BudgetController controller;
-    private BudgetService service;
-    private IBudgetRepository repository;
-    
-    private DefaultTableModel tableModel;
+    private final BudgetController controller;
+    private final BudgetService service;
+    private final IBudgetRepository repository;    
+    private final DefaultTableModel tableModel;
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(BudgetForm.class.getName());
 
@@ -33,12 +33,20 @@ public class BudgetForm extends javax.swing.JFrame {
      */
     public BudgetForm() {
         initComponents();
+        limpiarCampos();
         repository = new MySQLBudgetRepository();
         service = new BudgetService(repository);
         controller = new BudgetController(service);
         tableModel = new DefaultTableModel(new Object[]{"Fecha","Tipo", "Descripción", "Monto"}, 0);
         tbl_movimientos.setModel(tableModel);
         actualizarVista();
+    }
+    
+    private void limpiarCampos() {
+        txtFecha.setText("");
+        txtTipo.setText("");
+        txtDescripcion.setText("");
+        txtMonto.setText("");
     }
     
     private void actualizarVista() {
@@ -49,7 +57,6 @@ public class BudgetForm extends javax.swing.JFrame {
         // Obtener datos a través del controlador
         List<Transaccion> lista = controller.obtenerHistorial();
         for (Transaccion t : lista) {
-            System.out.println(t.toString());
             tableModel.addRow(new Object[]{
                 t.getFecha(), 
                 t.getClass().getSimpleName(), 
@@ -58,9 +65,9 @@ public class BudgetForm extends javax.swing.JFrame {
             });
         }
         // Actualizar saldo con lógica de dominio
-        /*Double saldo = controller.obtenerSaldoActual();
+        Double saldo = controller.obtenerSaldoActual();
         lblSaldo.setText("Saldo Actual: $" + String.format("%.2f", saldo));
-        lblSaldo.setForeground(saldo >= 0 ? Color.BLUE : Color.RED);*/
+        lblSaldo.setForeground(saldo >= 0 ? Color.BLUE : Color.RED);
     }
 
     /**
@@ -74,6 +81,12 @@ public class BudgetForm extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl_movimientos = new javax.swing.JTable();
+        lblSaldo = new javax.swing.JLabel();
+        txtFecha = new javax.swing.JTextField();
+        txtTipo = new javax.swing.JTextField();
+        txtDescripcion = new javax.swing.JTextField();
+        txtMonto = new javax.swing.JTextField();
+        btnAgregar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -90,25 +103,75 @@ public class BudgetForm extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(tbl_movimientos);
 
+        lblSaldo.setText("jLabel1");
+
+        txtFecha.setText("jTextField1");
+
+        txtTipo.setText("jTextField1");
+
+        txtDescripcion.setText("jTextField1");
+
+        txtMonto.setText("jTextField1");
+
+        btnAgregar.setText("Agregar");
+        btnAgregar.addActionListener(this::btnAgregarActionPerformed);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 594, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(lblSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 594, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(99, 99, 99)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(txtFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(89, 89, 89)
+                                .addComponent(btnAgregar))
+                            .addComponent(txtDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtMonto, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(27, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(157, Short.MAX_VALUE)
+                .addGap(15, 15, 15)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAgregar))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtMonto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(37, 37, 37))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
+        // TODO add your handling code here:
+        String mensaje = controller.ejecutarRegistro(txtDescripcion.getText()
+                ,Double.valueOf(txtMonto.getText())
+                , LocalDate.parse(txtFecha.getText())
+                ,txtTipo.getText());
+        System.out.println(mensaje);
+        actualizarVista();
+        limpiarCampos();
+    }//GEN-LAST:event_btnAgregarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -136,7 +199,13 @@ public class BudgetForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAgregar;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblSaldo;
     private javax.swing.JTable tbl_movimientos;
+    private javax.swing.JTextField txtDescripcion;
+    private javax.swing.JTextField txtFecha;
+    private javax.swing.JTextField txtMonto;
+    private javax.swing.JTextField txtTipo;
     // End of variables declaration//GEN-END:variables
 }
